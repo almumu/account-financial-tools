@@ -14,7 +14,7 @@ def insert_fy(env):
     for (name, date_start, date_end) in env.cr.fetchall():
         env.cr.execute("""        
           INSERT INTO date_range 
-            (name, date_start, date_end, date_range_type_id)
+            (name, date_start, date_end, type_id)
             VALUES ('%s', '%s', '%s', %s)
         """ % (name, date_start, date_end, fy_type.id))
 
