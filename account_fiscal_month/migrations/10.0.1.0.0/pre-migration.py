@@ -14,8 +14,8 @@ def copy_from_account_period(env):
         env.cr.execute("select id from date_range where name = '%s'" % name)
         if not env.cr.fetchone():
             env.cr.execute("""
-            INSERT into date_range (name, date_start, date_end, type_id)
-            VALUES ('%s', '%s', '%s', 2)        
+            INSERT into date_range (name, date_start, date_end, type_id, active, company_id)
+            VALUES ('%s', '%s', '%s', 2, true, 1)        
             """ % (name,  date_start, date_stop))
 
 
