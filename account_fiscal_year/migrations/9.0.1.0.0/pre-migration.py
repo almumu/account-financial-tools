@@ -42,9 +42,25 @@ def add_columns(cr):
             char;
             """)
 
+
+def restore_table(cr):
+    cr.execute(
+        """
+        SELECT table_name FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+        AND table_name = 'account_fiscalyear'
+        """
+    )
+    if not cr.fetchone():
+        cr.execute("""
+            select * into account_fiscalyear from legacy_account_fiscalyear;
+        """)
+
+
 @openupgrade.migrate(use_env=True)
 def migrate(env, version):
     drop_date_range(env.cr)
+    restore_table(env.cr)
     add_columns(env.cr)
     openupgrade.rename_columns(env.cr, column_renames)
     openupgrade.rename_tables(env.cr, table_renames)
