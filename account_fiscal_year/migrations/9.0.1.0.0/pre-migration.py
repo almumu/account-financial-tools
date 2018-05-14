@@ -57,6 +57,24 @@ def restore_table(cr):
         """)
 
 
+def date_range_primary_key(cr):
+    cr.execute("""
+    SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type
+    FROM   pg_index i
+    JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                         AND a.attnum = ANY(i.indkey)
+    WHERE  i.indrelid = 'date_range'::regclass
+    AND    i.indisprimary;
+    """)
+    if not cr.fetchone():
+        cr.execute("""
+            ALTER TABLE date_range drop constraint date_range_pkey cascade;
+            ALTER TABLE date_range ADD PRIMARY KEY (id);
+            CREATE SEQUENCE date_range_id_seq;
+            SELECT setval('date_range_id_seq', (SELECT MAX(id) FROM date_range))              
+        """)
+
+
 @openupgrade.migrate(use_env=True)
 def migrate(env, version):
     drop_date_range(env.cr)
@@ -64,3 +82,4 @@ def migrate(env, version):
     add_columns(env.cr)
     openupgrade.rename_columns(env.cr, column_renames)
     openupgrade.rename_tables(env.cr, table_renames)
+    date_range_primary_key(env.cr)
