@@ -70,6 +70,7 @@ def date_range_primary_key(cr):
         cr.execute("""
             ALTER TABLE date_range drop constraint date_range_pkey cascade;
             ALTER TABLE date_range ADD PRIMARY KEY (id);
+            DROP SEQUENCE date_range_id_seq;
             CREATE SEQUENCE date_range_id_seq;
             SELECT setval('date_range_id_seq', (SELECT MAX(id) FROM date_range))              
         """)
@@ -82,4 +83,4 @@ def migrate(env, version):
     add_columns(env.cr)
     openupgrade.rename_columns(env.cr, column_renames)
     openupgrade.rename_tables(env.cr, table_renames)
-    date_range_primary_key(env.cr)
+    # date_range_primary_key(env.cr)
