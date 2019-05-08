@@ -11,18 +11,10 @@ class AccountInvoice(models.Model):
     @api.multi
     def action_invoice_cancel(self):
         """ If cancel method is to reverse, use document reversal wizard """
-        if self.mapped('journal_id')[0].is_cancel_reversal:
+        if all(j.is_cancel_reversal for j in self.mapped('journal_id')) and \
+                all(st == 'open' for st in self.mapped('state')):
             return self.reverse_document_wizard()
         return super().action_invoice_cancel()
-
-    @api.multi
-    def action_invoice_draft(self):
-        """ If cancel method is to reverse, do not allow set to draft """
-        if self.mapped('journal_id')[0].is_cancel_reversal and \
-                self.mapped('move_id'):
-            raise UserError(_('This document is already cancelled, '
-                              'set to draft is not allowed'))
-        return super().action_invoice_draft()
 
     @api.multi
     def action_document_reversal(self, date=None, journal_id=None):
@@ -40,5 +32,5 @@ class AccountInvoice(models.Model):
         # Create reverse entries
         moves.reverse_moves(date, journal_id)
         # Set state cancelled
-        self.write({'state': 'cancel'})
+        self.write({'move_id': False, 'state': 'cancel'})
         return True
