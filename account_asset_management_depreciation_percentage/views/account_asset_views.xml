@@ -10,6 +10,7 @@
         <field name="inherit_id" ref="account_asset_management.account_asset_view_form"/>
         <field name="arch" type="xml">
             <field name="method_time" position="after">
+                <field name="use_percentage" invisible="1"/>
                 <field name="annual_percentage"
                     attrs="{'invisible': [('method_time', '!=', 'percentage')], 'required': [('method_time', '=', 'percentage')]}"
                 />

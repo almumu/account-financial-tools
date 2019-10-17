@@ -4,12 +4,13 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    "name": "Gestión de activos fijos para España",
-    "version": "12.0.1.0.1",
+    "name": "Account Asset Management Depreciation Percentage",
+    "version": "11.0.1.0.1",
     "depends": [
         "account_asset_management",
     ],
-    "author": "Tecnativa, "
+    "conflicts": ['l10n_es_account_asset'],
+    "author": "Eficent, "
               "Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "website": "https://odoo-community.org/",

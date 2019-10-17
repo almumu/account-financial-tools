@@ -23,7 +23,8 @@ class AccountAssetAsset(models.Model):
         inverse="_inverse_method_percentage",
         store=True,
     )
-
+    use_percentage = fields.Boolean(string='Use percentage method',
+                                    default=False)
     _sql_constraints = [
         ('annual_percentage',
          'CHECK (annual_percentage > 0 and annual_percentage <= 100)',
@@ -38,6 +39,14 @@ class AccountAssetAsset(models.Model):
                 asset.annual_percentage *
                 mapping.get(asset.method_period, 12) / 12
             )
+
+    @api.onchange('method_time')
+    def _onchange_method_time(self):
+        if self.method_time == 'percentage':
+            self.use_percentage = True
+            self.method_number = 0
+        else:
+            self.use_percentage = False
 
     @api.onchange('method_percentage')
     def _inverse_method_percentage(self):
@@ -115,7 +124,7 @@ class AccountAssetAsset(models.Model):
 
     def _compute_depreciation_amount_per_fiscal_year(
             self, table, line_dates, depreciation_start_date,
-            depreciation_stop_date):
+            depreciation_stop_date, use_percentage=False):
         """"Simulate the computation like year one."""
         is_changed = self.method_time == 'percentage'
         if is_changed:
@@ -141,6 +150,6 @@ class AccountAssetAsset(models.Model):
             self.method_time = 'percentage'
 
     def _get_amount_linear(self):
-        if self.method_time == 'percentage':
+        if self.use_percentage:
             return self.depreciation_base * self.annual_percentage / 100
         return super(AccountAssetAsset, self)._get_amount_linear()
