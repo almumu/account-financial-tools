@@ -153,4 +153,5 @@ class AccountAssetAsset(models.Model):
             self, depreciation_start_date, depreciation_stop_date):
         if self.use_percentage:
             return self.depreciation_base * self.annual_percentage / 100
-        return super(AccountAssetAsset, self)._get_amount_linear()
+        return super(AccountAssetAsset, self)._get_amount_linear(
+            depreciation_start_date, depreciation_stop_date)
