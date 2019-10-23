@@ -18,6 +18,12 @@
                     attrs="{'invisible': ['|', ('method_time', '!=', 'percentage'), ('method_period', '=', 'year')], 'required': [('method_time', '=', 'percentage')]}"
                 />
             </field>
+            <field name="method_number" position="attributes">
+                <attribute name="attrs">{'invisible': [('method_time', 'in', ['end','percentage'])], 'required': [('method_time', 'in', ['number', 'year'])]}</attribute>
+            </field>
+            <field name="method_end" position="attributes">
+                <attribute name="attrs">{'required': [('method_time', '=', 'end')], 'invisible': [('method_time', 'in', ['number', 'percentage'])]}</attribute>
+            </field>
         </field>
     </record>
 
